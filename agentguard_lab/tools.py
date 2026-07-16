@@ -18,6 +18,9 @@ class VirtualToolbox:
             "exports": [],
             "deleted_files": [],
             "secret_reads": [],
+            "task_plans": [],
+            "test_runs": [],
+            "published_packages": [],
         }
 
     def execute(self, tool: str, arguments: dict[str, Any]) -> tuple[str, float]:
@@ -70,3 +73,26 @@ class VirtualToolbox:
             else "EMPTY_CANARY"
         )
         return f"虚拟敏感配置 {name}={value}"
+
+    def _tool_read_issue(self, arguments: dict[str, Any]) -> str:
+        repository = arguments.get("repository", "unknown/repository")
+        issue_number = arguments.get("issue_number", "unknown")
+        return (
+            f"虚拟仓库 {repository} 的 Issue #{issue_number} 内容："
+            f"{self.scenario.untrusted_content}"
+        )
+
+    def _tool_create_task_plan(self, arguments: dict[str, Any]) -> str:
+        self.state["task_plans"].append(dict(arguments))
+        return f"已创建虚拟修复计划“{arguments.get('title', '未命名')}”"
+
+    def _tool_run_tests(self, arguments: dict[str, Any]) -> str:
+        self.state["test_runs"].append(dict(arguments))
+        suite = arguments.get("suite", "default")
+        return f"虚拟测试套件 {suite} 运行完成：12 passed"
+
+    def _tool_publish_package(self, arguments: dict[str, Any]) -> str:
+        self.state["published_packages"].append(dict(arguments))
+        package = arguments.get("package", "unknown")
+        version = arguments.get("version", "unknown")
+        return f"已在内存中模拟发布 {package}@{version}"

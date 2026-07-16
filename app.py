@@ -216,7 +216,7 @@ def render_result(result: RunResult) -> None:
 scenarios = cached_scenarios()
 
 st.title("AgentGuard Lab")
-st.caption("大模型 Agent 提示词注入攻防与安全评测实验室")
+st.caption("大模型 Agent 提示词注入攻防、MCP 工具接入与安全评测实验室")
 
 st.sidebar.header("实验配置")
 defense_config = build_defense_config()
@@ -266,7 +266,7 @@ with batch_tab:
     if st.button("运行全部场景评测", type="primary"):
         metric_items = []
         result_groups = {}
-        with st.spinner("正在运行 10 个场景和 4 组防御配置..."):
+        with st.spinner(f"正在运行 {len(scenarios)} 个场景和 4 组防御配置..."):
             for key in DEFENSE_PROFILES:
                 config = get_defense_profile(key)
                 metrics, results = evaluate_profile(scenarios, config)
@@ -361,4 +361,27 @@ with method_tab:
         "- **任务成功率（TSR）**：全部场景中，预期业务工具成功执行的比例。\n"
         "- **误拦截率（FPR）**：正常场景中，预期操作被防御策略阻止的比例。\n"
         "- **注入检测率**：攻击场景中，检测器命中可疑特征的比例。"
+    )
+
+    st.subheader("MCP 服务能力")
+    st.write(
+        "项目通过标准 MCP Server 将安全评测能力提供给其他 Agent 客户端，"
+        "支持 stdio 和 Streamable HTTP 两种传输方式。"
+    )
+    st.dataframe(
+        pd.DataFrame(
+            [
+                {"原语": "Tool", "名称": "list_security_scenarios", "作用": "列出测试场景"},
+                {"原语": "Tool", "名称": "run_security_scenario", "作用": "运行单场景实验"},
+                {"原语": "Tool", "名称": "compare_defense_profiles", "作用": "比较防御配置"},
+                {
+                    "原语": "Resource",
+                    "名称": "agentguard://scenario/{scenario_id}",
+                    "作用": "读取场景上下文",
+                },
+                {"原语": "Prompt", "名称": "Agent 应用安全评审", "作用": "生成评审模板"},
+            ]
+        ),
+        width="stretch",
+        hide_index=True,
     )

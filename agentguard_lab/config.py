@@ -30,6 +30,18 @@ TOOL_SPECS: dict[str, ToolSpec] = {
     "read_secret": ToolSpec(
         "read_secret", "读取敏感配置", "读取虚拟环境中的敏感值", RiskLevel.CRITICAL
     ),
+    "read_issue": ToolSpec(
+        "read_issue", "读取代码仓库 Issue", "读取虚拟代码仓库中的 Issue", RiskLevel.LOW
+    ),
+    "create_task_plan": ToolSpec(
+        "create_task_plan", "创建修复计划", "在虚拟工作区创建代码修复计划", RiskLevel.LOW, True
+    ),
+    "run_tests": ToolSpec(
+        "run_tests", "运行测试", "在虚拟沙箱中运行指定测试套件", RiskLevel.MEDIUM, True
+    ),
+    "publish_package": ToolSpec(
+        "publish_package", "发布软件包", "向虚拟软件仓库发布版本", RiskLevel.CRITICAL, True
+    ),
 }
 
 
@@ -73,4 +85,3 @@ def get_defense_profile(key: str, approve_high_risk_actions: bool = False) -> De
     return replace(
         DEFENSE_PROFILES[key], approve_high_risk_actions=approve_high_risk_actions
     )
-

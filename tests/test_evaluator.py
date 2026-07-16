@@ -18,7 +18,6 @@ def test_expected_profile_metrics():
     assert balanced.attack_success_rate == 0.0
     assert balanced.task_success_rate == 100.0
     assert strict.attack_success_rate == 0.0
-    assert strict.task_success_rate == 90.0
-    assert strict.false_positive_rate == 20.0
+    assert strict.task_success_rate == 91.7
+    assert strict.false_positive_rate == 16.7
     assert balanced.overall_score > strict.overall_score > detection.overall_score
-
