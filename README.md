@@ -276,7 +276,7 @@ python -m streamlit run app.py
 http://localhost:8501
 ```
 
-## 推荐演示流程
+## 实验流程
 
 ### 第一步：复现攻击
 
@@ -309,8 +309,6 @@ http://localhost:8501
 3. 比较 4 组配置的攻击成功率、任务成功率和误拦截率。
 4. 导出 CSV 报告。
 
-这套流程大约需要 2 至 3 分钟，适合功能验收和项目演示。
-
 ## 接入真实大模型
 
 真实模型模式使用常见的 `/chat/completions` OpenAI 兼容接口。请先复制环境变量模板：
@@ -331,7 +329,7 @@ LLM_MODEL=replace-with-your-model-name
 
 注意：
 
-- `.env` 已被 `.gitignore` 排除，禁止把真实 API Key 上传到 GitHub。
+- `.env` 已被 `.gitignore` 排除，禁止把真实 API Key 写入版本库。
 - 如果服务商不支持 `response_format`，适配器会自动重试普通 JSON 提示模式。
 - 真实模型输出存在随机性，建议每个场景重复运行多次并统计均值。
 - 批量评测固定使用本地规则引擎，避免误触发大量付费请求。
@@ -493,7 +491,6 @@ agentguard-lab/
 │   ├── scenarios.py                # 场景加载与校验
 │   └── tools.py                    # 内存虚拟工具箱
 ├── data/scenarios.json             # 12 个中文攻防场景
-├── docs/学习指南.md                 # 从运行到扩展开发的学习路线
 ├── tests/                          # 自动化测试
 ├── .env.example                    # API 配置示例
 ├── app.py                          # 中文 Streamlit 界面
@@ -505,7 +502,7 @@ agentguard-lab/
 
 ## 核心代码阅读顺序
 
-基础较弱时，建议按下面顺序阅读：
+建议按下面顺序阅读核心代码：
 
 1. `data/scenarios.json`：先理解输入数据长什么样。
 2. `agentguard_lab/models.py`：理解场景、工具调用和运行结果的数据结构。
@@ -516,8 +513,6 @@ agentguard-lab/
 7. `agentguard_lab/evaluator.py`：理解指标如何从运行结果中计算。
 8. `agentguard_lab/mcp_server.py`：理解如何把能力暴露给其他 Agent 客户端。
 9. `app.py`：最后阅读界面如何展示这些数据。
-
-更细的实验和扩展任务见 [docs/学习指南.md](docs/学习指南.md)。
 
 ## 如何增加一个场景
 
@@ -603,68 +598,6 @@ python -m ruff check .
 
 每次推送或提交 Pull Request 时，GitHub Actions 会自动执行 Ruff 和 Pytest。
 
-## 上传到 GitHub
-
-### 1. 修改个人信息
-
-建议先完成以下修改：
-
-- 将 `pyproject.toml` 中的作者信息改成你的姓名或 GitHub 用户名；
-- 在 README 开头加入你的在线演示地址；
-- 项目运行后录制一段 2 至 3 分钟演示视频；
-- 在 GitHub 仓库的 About 区域填写简介和技术标签。
-
-### 2. 创建本地提交
-
-```powershell
-cd E:\github\agentguard-lab
-git init
-git add .
-git commit -m "feat: 初始化 AgentGuard Lab 安全评测平台"
-git branch -M main
-```
-
-### 3. 创建 GitHub 仓库
-
-在 GitHub 创建一个空仓库，推荐名称：
-
-```text
-agentguard-lab
-```
-
-不要勾选自动创建 README、`.gitignore` 或 License，因为本地已经有这些文件。
-
-### 4. 关联并推送
-
-将下面的 `<你的GitHub用户名>` 替换成真实用户名：
-
-```powershell
-git remote add origin https://github.com/<你的GitHub用户名>/agentguard-lab.git
-git push -u origin main
-```
-
-推送前运行：
-
-```powershell
-git status
-git diff --cached
-```
-
-重点确认 `.env` 没有进入提交记录。
-
-## 部署在线演示
-
-项目可以部署到 Streamlit Community Cloud：
-
-1. 将仓库推送到 GitHub。
-2. 登录 Streamlit Community Cloud。
-3. 选择该 GitHub 仓库和 `main` 分支。
-4. Main file path 填写 `app.py`。
-5. 点击部署。
-6. 部署成功后，将地址添加到 README 和项目主页。
-
-本地规则引擎不需要配置 Secrets。接入真实模型时，应在部署平台的 Secrets 管理页面配置环境变量，不能提交 `.env`。
-
 ## 设计说明与限制
 
 ### 为什么提供本地规则引擎？
@@ -685,7 +618,7 @@ git diff --cached
 
 ### 为什么使用虚拟工具？
 
-安全实验需要可重复和无真实副作用。虚拟工具保留工具名称、风险、参数和执行状态，但所有操作只写内存，因此适合开源仓库、课堂演示和 CI。
+安全实验需要可重复和无真实副作用。虚拟工具保留工具名称、风险、参数和执行状态，但所有操作只写内存，因此适合本地实验和 CI。
 
 ### 当前限制
 
